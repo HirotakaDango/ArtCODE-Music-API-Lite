@@ -43,7 +43,24 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
     exit();
   } else {
     // Handle the case where there are no songs available
-    echo "<h5 class='text-center mt-3 fw-bold'>Error: No songs available</h5>";
+    echo "<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9' crossorigin='anonymous'>
+          <body data-bs-theme='dark'>
+            <div class='container d-flex justify-content-center align-items-center vh-100 custom-bg text-shadow'>
+              <div class='container p-3 rounded-4 shadow border-0 position-relative' style='max-width: 350px;'>
+                <div class='row g-2'>
+                  <div class='col'>
+                    <h5 class='text-center my-3 fw-bold'>Error: No songs available</h5>
+                    <form class='container-fluid' method='POST'>
+                      <div class='input-group'>
+                        <input class='form-control bg-dark-subtle border-0 focus-ring focus-ring-dark rounded-start-4 fw-medium' type='text' name='website_url' value='" . $websiteUrl . "' placeholder='website url'>
+                        <button class='btn bg-dark-subtle border-0 link-body-emphasis fw-medium rounded-end-4'>save</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </body>";
     exit();
   }
 }
@@ -59,13 +76,6 @@ foreach ($data as $song) {
     $selectedSong = $song;
     break;
   }
-}
-
-// Check if the song was found
-if (!$selectedSong) {
-  // Song not found, handle the error (you can redirect or display an error message)
-  echo "<h5 class='text-center mt-3 fw-bold'>Error: Song not found</h5>";
-  exit;
 }
 
 // Find the index of the selected song in the data array
@@ -196,43 +206,61 @@ $nextRow = $data[$nextIndex];
       <div class="container p-3 rounded-4 shadow border-0 position-relative" style="max-width: 350px;">
         <a class="position-absolute end-0 top-0 btn border-0 link-body-emphasis text-shadow" href="#" data-bs-toggle="modal" data-bs-target="#optionModal"><i class="bi bi-three-dots-vertical"></i></a>
         <div class="row g-2">
-          <div class="col-5">
-            <div class="text-center ratio ratio-1x1">
-              <a class="shadow" data-bs-toggle="modal" data-bs-target="#originalImage"><img src="<?php echo $websiteUrl . '/feeds/music/' . $selectedSong['cover']; ?>" alt="Song Image" class="h-100 w-100 object-fit-cover rounded-3 shadow"></a>
-            </div>
-          </div>
-          <div class="col-7 d-flex justify-content-center align-items-center">
-            <div class="text-center overflow-auto text-nowrap mt-2">
-              <h6 class="text-white fw-bold overflow-auto text-nowrap small"><?php echo $selectedSong['title']; ?></h6>
-              <h6 class="text-white fw-bold overflow-auto text-nowrap small"><small><?php echo $selectedSong['artist']; ?> - <?php echo $selectedSong['album']; ?></small></h6>
-              <div class="btn-group w-100 d-flex justify-content-center align-items-center gap-0">
-                <!-- (debugging) <?php echo $prevIndex.'-'.count($data).'-'.$selectedSongIndex.'-'.$data[1]['id']."-".$prevRow['id']; ?> -->
-                <a class="btn border-0 link-body-emphasis text-white text-shadow text-start me-auto" href="?id=<?php echo ($prevIndex == 0) && ($selectedSongIndex == 0) ? $data[count($data) - 1]['id'] : $prevRow['id']; ?>">
-                  <i class="bi bi-skip-start-fill fs-custom-2"></i>
-                </a>
-                <button class="btn border-0 link-body-emphasis text-white text-shadow text-center mx-auto" id="playPauseButton" onclick="togglePlayPause()">
-                  <i class="bi bi-play-circle-fill fs-custom"></i>
-                </button>
-                <a class="btn border-0 link-body-emphasis text-white text-shadow text-end ms-auto" href="?id=<?php echo ($nextIndex == count($data)-1) && ($selectedSongIndex == count($data)-1) ? $data[0]['id'] : $nextRow['id']; ?>">
-                  <i class="bi bi-skip-end-fill fs-custom-2"></i>
-                </a>
-                <!-- (debugging) <?php echo $nextIndex.'-'.count($data).'-'.$selectedSongIndex.'-'.$data[0]['id']."-".$nextRow['id']; ?> -->
+          <?php if (!empty($selectedSong)): ?>
+            <div class="col-5">
+              <div class="text-center ratio ratio-1x1">
+                <a class="shadow" data-bs-toggle="modal" data-bs-target="#originalImage"><img src="<?php echo $websiteUrl . '/feeds/music/' . $selectedSong['cover']; ?>" alt="Song Image" class="h-100 w-100 object-fit-cover rounded-3 shadow"></a>
               </div>
             </div>
-          </div>
-        </div>
-        <div class="mt-2">
-          <div id="music-player" class="w-100">
-            <div class="d-flex justify-content-start align-items-center fw-medium text-white gap-2">
-              <span class="me-auto small" id="duration"></span>
-              <input type="range" class="w-100 form-range mx-auto box-shadow" id="duration-slider" value="0">
-              <span class="ms-auto small" id="duration-left"></span>
+            <div class="col-7 d-flex justify-content-center align-items-center">
+              <div class="text-center overflow-auto text-nowrap mt-2">
+                <h6 class="text-white fw-bold overflow-auto text-nowrap small"><?php echo $selectedSong['title']; ?></h6>
+                <h6 class="text-white fw-bold overflow-auto text-nowrap small"><small><?php echo $selectedSong['artist']; ?> - <?php echo $selectedSong['album']; ?></small></h6>
+                <div class="btn-group w-100 d-flex justify-content-center align-items-center gap-0">
+                  <!-- (debugging) <?php echo $prevIndex.'-'.count($data).'-'.$selectedSongIndex.'-'.$data[1]['id']."-".$prevRow['id']; ?> -->
+                  <a class="btn border-0 link-body-emphasis text-white text-shadow text-start me-auto" href="?id=<?php echo ($prevIndex == 0) && ($selectedSongIndex == 0) ? $data[count($data) - 1]['id'] : $prevRow['id']; ?>">
+                    <i class="bi bi-skip-start-fill fs-custom-2"></i>
+                  </a>
+                  <button class="btn border-0 link-body-emphasis text-white text-shadow text-center mx-auto" id="playPauseButton" onclick="togglePlayPause()">
+                    <i class="bi bi-play-circle-fill fs-custom"></i>
+                  </button>
+                  <a class="btn border-0 link-body-emphasis text-white text-shadow text-end ms-auto" href="?id=<?php echo ($nextIndex == count($data)-1) && ($selectedSongIndex == count($data)-1) ? $data[0]['id'] : $nextRow['id']; ?>">
+                    <i class="bi bi-skip-end-fill fs-custom-2"></i>
+                  </a>
+                  <!-- (debugging) <?php echo $nextIndex.'-'.count($data).'-'.$selectedSongIndex.'-'.$data[0]['id']."-".$nextRow['id']; ?> -->
+                </div>
+              </div>
             </div>
-            <audio id="player" class="d-none" controls>
-              <source src="<?php echo $websiteUrl . '/feeds/music/' . $selectedSong['file']; ?>" type="audio/mpeg">
-              Your browser does not support the audio element.
-            </audio>
-          </div>
+            <div class="mt-2">
+              <div id="music-player" class="w-100">
+                <div class="d-flex justify-content-start align-items-center fw-medium text-white gap-2">
+                  <span class="me-auto small" id="duration"></span>
+                  <input type="range" class="w-100 form-range mx-auto box-shadow" id="duration-slider" value="0">
+                  <span class="ms-auto small" id="duration-left"></span>
+                </div>
+                <audio id="player" class="d-none" controls>
+                  <source src="<?php echo $websiteUrl . '/feeds/music/' . $selectedSong['file']; ?>" type="audio/mpeg">
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
+            </div>
+          <?php else: ?>
+            <?php
+            // Check if there's no ID parameter in the URL
+            if (!isset($_GET['id']) || empty($_GET['id'])) {
+              // Redirect to the first song if there's no ID parameter
+              if (!empty($data)) {
+                $firstSong = reset($data);
+                header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $firstSong['id']);
+                exit();
+              } else {
+                // Handle the case where there are no songs available
+                echo "<div class='col'><h5 class='text-center mt-3 fw-bold'>Error: No songs available</h5></div>";
+                exit();
+              }
+            }
+            ?>
+          <?php endif; ?>
         </div>
       </div>
     </div>
